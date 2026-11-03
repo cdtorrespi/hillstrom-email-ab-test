@@ -2,28 +2,28 @@
 
 Análisis de un experimento aleatorizado de una tienda de ropa en línea con 64,000 clientes y tres grupos: correo con mercancía de hombre, correo con mercancía de mujer y sin correo. El objetivo es decidir si conviene mandar campañas, cuál y a quién, con el impacto estimado en dinero.
 
-**Herramientas:** PostgreSQL · Python (pandas, NumPy, SciPy, scikit-learn, matplotlib) · Power BI
+Herramientas: PostgreSQL y Python (pandas, NumPy, SciPy, scikit-learn, matplotlib). Al final se exportan tablas listas para armar un reporte en Power BI.
 
 ---
 
 ## Resumen ejecutivo
 
-**Decisión: mandar el correo de hombre a toda la base.**
+Decisión: mandar el correo de hombre a toda la base.
 
 | | Sin correo | Correo de mujer | Correo de hombre |
 |---|---|---|---|
-| Tasa de visita | 10.6 % | 15.1 % | **18.3 %** |
-| Tasa de conversión | 0.57 % | 0.88 % | **1.25 %** |
-| Ingreso por cliente (2 semanas) | $0.65 | $1.08 | **$1.42** |
-| Ingreso incremental por cada 1,000 correos | — | $424 | **$770** |
+| Tasa de visita | 10.6 % | 15.1 % | 18.3 % |
+| Tasa de conversión | 0.57 % | 0.88 % | 1.25 % |
+| Ingreso por cliente (2 semanas) | $0.65 | $1.08 | $1.42 |
+| Ingreso incremental por cada 1,000 correos | — | $424 | $770 |
 
-- **Las dos campañas funcionan.** Frente a no mandar correo, ambas aumentan visitas, compras e ingreso, y las nueve comparaciones siguen siendo significativas después de ajustar por comparaciones múltiples (Holm dentro de cada métrica).
-- **El correo de hombre es el mejor:** +0.77 USD por cliente frente al control (IC 95 %: 0.49 a 1.05), contra +0.42 del de mujer. La diferencia entre ambos (+0.35 USD, IC 95 %: 0.03 a 0.66) es significativa (p ajustado = 0.03).
-- **Los datos sugieren que el efecto viene de más compradores**, no de compras más grandes: el ticket promedio es similar en los tres grupos (descriptivo, porque el ticket se calcula solo sobre compradores).
-- **No hay evidencia de que convenga personalizar por segmento.** Dos diferencias entre segmentos parecían prometedoras en una mitad de los datos y ninguna se repitió en la otra mitad. Un modelo de uplift que elige el correo por cliente tampoco supera a la regla simple (−0.15 USD por cliente, IC 95 %: −0.41 a +0.10).
-- **La decisión es robusta a los costos.** Con un margen de 30 % y el límite inferior del intervalo, la campaña deja ganancia mientras cada correo cueste menos de ~0.15 USD.
+- Frente a no mandar correo, las dos campañas aumentan visitas, compras e ingreso, y las nueve comparaciones siguen siendo significativas después de ajustar por comparaciones múltiples (Holm dentro de cada métrica).
+- El correo de hombre es el mejor: deja +0.77 USD por cliente frente al control (IC 95 %: 0.49 a 1.05), contra +0.42 del de mujer. La diferencia entre ambos (+0.35 USD, IC 95 %: 0.03 a 0.66) es significativa (p ajustado = 0.03).
+- El efecto parece venir de más compradores, no de compras más grandes: el ticket promedio es similar en los tres grupos (descriptivo, porque el ticket se calcula solo sobre compradores).
+- No encontré evidencia de que convenga personalizar por segmento. Dos diferencias entre segmentos parecían prometedoras en una mitad de los datos y ninguna se repitió en la otra mitad. Un modelo de uplift que elige el correo por cliente tampoco supera a la regla simple (−0.15 USD por cliente, IC 95 %: −0.41 a +0.10).
+- La decisión aguanta supuestos de costo conservadores: con un margen de 30 % y el límite inferior del intervalo, la campaña deja ganancia mientras cada correo cueste menos de ~0.15 USD.
 
-En una lista como la del experimento, mandar el correo de hombre a todos genera unos **49 mil USD adicionales en dos semanas** (IC 95 %: 31 mil a 67 mil).
+En una lista como la del experimento, mandar el correo de hombre a todos genera unos 49 mil USD adicionales en dos semanas (IC 95 %: 31 mil a 67 mil).
 
 ![Efectos principales](reports/figures/02_efectos_principales.png)
 
@@ -58,7 +58,7 @@ El plan de análisis se escribió antes de calcular efectos: [`docs/plan_de_anal
 ### 3. Segmentos y uplift
 
 - Solo uso variables medidas antes del envío. Segmentar por algo que el correo pudo cambiar, como haber visitado el sitio, rompería la aleatorización.
-- Dividí la muestra al azar en dos mitades: en la de exploración, dos interacciones del correo de mujer (cliente nuevo y canal de compra) salieron con p < 0.10. **En la de confirmación ninguna se repitió** (p = 0.72 y 0.94).
+- Dividí la muestra al azar en dos mitades: en la de exploración, dos interacciones del correo de mujer (cliente nuevo y canal de compra) salieron con p < 0.10. En la de confirmación ninguna se repitió (p = 0.72 y 0.94).
 - De forma exploratoria, el correo de hombre tiene efecto estimado positivo en los 18 segmentos revisados y es el mejor en 15. El poder por segmento es bajo, así que no encontrar diferencias no prueba que no existan.
 - El modelo de uplift (T-learner) se eligió en un conjunto de validación y se evaluó una sola vez en un 30 % de datos no vistos. No mejora a mandar el correo de hombre a todos.
 
@@ -90,7 +90,7 @@ jupyter notebook notebooks/
 
 El CSV ya viene en `data/raw/`. Si lo borras y la descarga automática falla, baja el CSV del [blog de MineThatData](https://blog.minethatdata.com/2008/03/minethatdata-e-mail-analytics-and-data.html) y guárdalo como `data/raw/hillstrom.csv`.
 
-**Parte de SQL (opcional, desde la raíz del repo porque la carga usa una ruta relativa):**
+Parte de SQL (opcional; correr desde la raíz del repo porque la carga usa una ruta relativa):
 
 ```bash
 createdb hillstrom
@@ -131,7 +131,7 @@ Kevin Hillstrom, *MineThatData E-Mail Analytics and Data Mining Challenge* (2008
 
 ## Autor
 
-**Carlos Daniel Torres Pillado**, analista de datos · Chihuahua, México
+Carlos Daniel Torres Pillado, analista de datos. Chihuahua, México.
 
 - GitHub: [@cdtorrespi](https://github.com/cdtorrespi)
 - Correo: [cdtorres.pi@gmail.com](mailto:cdtorres.pi@gmail.com)
