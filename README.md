@@ -84,11 +84,11 @@ git clone https://github.com/cdtorrespi/hillstrom-email-ab-test.git
 cd hillstrom-email-ab-test
 python -m venv .venv && source .venv/bin/activate   # en Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-python src/descargar_datos.py
+python src/descargar_datos.py   # valida el CSV incluido (o lo descarga si falta)
 jupyter notebook notebooks/
 ```
 
-Si la descarga automática falla, baja el CSV del [blog de MineThatData](https://blog.minethatdata.com/2008/03/minethatdata-e-mail-analytics-and-data.html) y guárdalo como `data/raw/hillstrom.csv`.
+El CSV ya viene en `data/raw/`. Si lo borras y la descarga automática falla, baja el CSV del [blog de MineThatData](https://blog.minethatdata.com/2008/03/minethatdata-e-mail-analytics-and-data.html) y guárdalo como `data/raw/hillstrom.csv`.
 
 **Parte de SQL (opcional, desde la raíz del repo porque la carga usa una ruta relativa):**
 
@@ -105,7 +105,7 @@ psql -d hillstrom -f sql/03_exploracion.sql
 hillstrom-email-ab-test/
 ├── README.md
 ├── requirements.txt
-├── data/raw/                 # datos crudos (no se versionan)
+├── data/raw/hillstrom.csv    # datos originales (64,000 clientes)
 ├── docs/
 │   └── plan_de_analisis.md   # métricas, hipótesis y criterios fijados antes del análisis
 ├── sql/
