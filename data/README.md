@@ -1,23 +1,23 @@
-# Datos
+# Data
 
-El dataset original está en `data/raw/hillstrom.csv`, sin modificaciones. Para validarlo (o descargarlo si no está):
+The original dataset is in `data/raw/hillstrom.csv`, unmodified. To validate it (or download it if it is missing):
 
 ```bash
-python src/descargar_datos.py
+python src/download_data.py
 ```
 
-El script revisa que tenga las 12 columnas y 64,000 filas esperadas.
+The script checks that it has the expected 12 columns and 64,000 rows.
 
-Si necesitas volver a descargarlo y el enlace falla, baja el archivo manualmente desde el [blog de MineThatData](https://blog.minethatdata.com/2008/03/minethatdata-e-mail-analytics-and-data.html) o desde Kaggle (buscar "Hillstrom email marketing") y guárdalo con ese nombre.
+If you need to download it again and the link fails, get the file manually from the [MineThatData blog](https://blog.minethatdata.com/2008/03/minethatdata-e-mail-analytics-and-data.html) or from Kaggle (search for "Hillstrom email marketing") and save it under that name.
 
-## Fuente
+## Source
 
 Kevin Hillstrom, *MineThatData E-Mail Analytics and Data Mining Challenge* (2008).
 
 | | |
 |---|---|
-| Clientes | 64,000 que compraron en los últimos 12 meses |
-| Grupos | Correo de hombre, correo de mujer, sin correo (asignación aleatoria) |
-| Ventana de resultados | 2 semanas después del envío |
-| Columnas | 12 (ver diccionario en `notebooks/01_validacion.ipynb`) |
-| Tamaño | ~3.8 MB |
+| Customers | 64,000 who bought in the past 12 months |
+| Groups | Men's email, women's email, no email (random assignment) |
+| Outcome window | 2 weeks after the send |
+| Columns | 12 (see the data dictionary in `notebooks/01_validation.ipynb`) |
+| Size | ~3.8 MB |

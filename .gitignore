@@ -5,7 +5,7 @@ __pycache__/
 venv/
 .ipynb_checkpoints/
 
-# Sistema
+# OS files
 .DS_Store
 Thumbs.db
 

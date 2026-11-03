@@ -1,142 +1,142 @@
-# Campañas por correo: análisis de un experimento A/B/n
+# Email Campaigns: Analysis of an A/B/n Experiment
 
-Una tienda de ropa en línea tenía dos campañas de correo, una con mercancía de hombre y otra de mujer, y quería saber si valía la pena mandarlas, cuál de las dos y a quién. Para responderlo tomó a 64,000 clientes y los repartió al azar en tres grupos: unos recibieron el correo de hombre, otros el de mujer y otros ninguno. Dos semanas después se midió quién visitó el sitio, quién compró y cuánto gastó.
+An online clothing retailer had two email campaigns, one featuring men's merchandise and one featuring women's, and wanted to know whether they were worth sending, which of the two, and to whom. To find out, it took 64,000 customers and split them at random into three groups: some got the men's email, some got the women's email, and some got nothing. Two weeks later it measured who visited the site, who bought and how much they spent.
 
-Este repositorio es mi análisis de ese experimento, desde validar que estuviera bien hecho hasta estimar cuánto dinero deja cada decisión.
+This repository is my analysis of that experiment, from checking that it was run correctly to estimating how much money each decision is worth.
 
-Herramientas: PostgreSQL y Python (pandas, NumPy, SciPy, scikit-learn, matplotlib). Al final se exportan tablas listas para armar un reporte en Power BI.
+Tools: PostgreSQL and Python (pandas, NumPy, SciPy, scikit-learn, matplotlib). At the end, the notebooks export tables ready to build a report in Power BI.
 
 ---
 
-## La respuesta corta
+## The short answer
 
-Conviene mandar el correo de hombre a toda la base. Deja unos 770 USD adicionales por cada 1,000 correos, casi el doble que el de mujer, y no encontré ningún segmento de clientes donde convenga hacer otra cosa.
+Send the men's email to the whole list. It brings in about 770 USD of additional revenue per 1,000 emails, almost double the women's email, and I found no customer segment where doing something else pays off.
 
-| | Sin correo | Correo de mujer | Correo de hombre |
+| | No email | Women's email | Men's email |
 |---|---|---|---|
-| Tasa de visita | 10.6 % | 15.1 % | 18.3 % |
-| Tasa de conversión | 0.57 % | 0.88 % | 1.25 % |
-| Ingreso por cliente (2 semanas) | $0.65 | $1.08 | $1.42 |
-| Ingreso incremental por cada 1,000 correos | — | $424 | $770 |
+| Visit rate | 10.6% | 15.1% | 18.3% |
+| Conversion rate | 0.57% | 0.88% | 1.25% |
+| Revenue per customer (2 weeks) | $0.65 | $1.08 | $1.42 |
+| Incremental revenue per 1,000 emails | — | $424 | $770 |
 
-En una lista del tamaño de la del experimento, eso equivale a unos 49 mil USD adicionales en dos semanas (IC 95 %: 31 mil a 67 mil).
+On a list the size of the experiment's, that comes to about 49k USD of additional revenue over two weeks (95% CI: 31k to 67k).
 
-![Efectos principales](reports/figures/02_efectos_principales.png)
+![Main effects](reports/figures/02_main_effects.png)
 
-## Cómo llegué a esa conclusión
+## How I got there
 
-### Primero, revisar que el experimento fuera confiable
+### First, make sure the experiment could be trusted
 
-Antes de comparar resultados quise descartar que el experimento estuviera mal hecho, porque si la asignación al azar falló, cualquier diferencia entre grupos podría deberse a otra cosa. Los tres grupos quedaron casi del mismo tamaño (21,306 / 21,307 / 21,387; prueba de SRM, p = 0.90) y son comparables en todas las variables previas al envío (diferencia estandarizada máxima: 0.014).
+Before comparing results, I wanted to rule out a badly run experiment, because if random assignment failed, any difference between groups could be due to something else. The three groups came out almost the same size (21,306 / 21,307 / 21,387; SRM test, p = 0.90) and are comparable on every variable measured before the send (largest standardized difference: 0.014).
 
-También encontré una advertencia importante: más del 99 % de los clientes no compra nada, así que el ingreso por cliente es muy ruidoso. Con este tamaño de muestra, el experimento solo podía detectar efectos de unos 0.31 USD por cliente (48 % del control) con 80 % de poder. Para las visitas el poder es mucho mayor. Eso me obligó a ser cuidadoso con cualquier conclusión sobre grupos pequeños.
+I also found an important warning: more than 99% of customers buy nothing, so revenue per customer is very noisy. With this sample size, the experiment could only detect effects of about 0.31 USD per customer (48% of control) with 80% power. Power for visits is much higher. That forced me to be careful with any conclusion about small groups.
 
-Para no acomodar el análisis a los resultados, escribí el [plan de análisis](docs/plan_de_analisis.md) antes de calcular cualquier efecto: qué métricas, qué pruebas y qué criterio de decisión.
+To avoid fitting the analysis to the results, I wrote the [analysis plan](docs/analysis_plan.md) before computing any effect: which metrics, which tests and which decision criterion.
 
-![Distribución del gasto](reports/figures/01_distribucion_gasto.png)
+![Spend distribution](reports/figures/01_spend_distribution.png)
 
-### Después, medir si las campañas funcionan
+### Then, measure whether the campaigns work
 
-Las dos funcionan. Frente a no mandar correo, ambas aumentan visitas, compras e ingreso, y las nueve comparaciones siguen siendo significativas después de ajustar por comparaciones múltiples con el método de Holm.
+Both work. Compared with sending no email, both increase visits, purchases and revenue, and all nine comparisons remain significant after adjusting for multiple comparisons with the Holm method.
 
-El correo de hombre gana con claridad: deja +0.77 USD por cliente frente al control (IC 95 %: 0.49 a 1.05), contra +0.42 del de mujer. La diferencia entre los dos (+0.35 USD, IC 95 %: 0.03 a 0.66) también es significativa (p ajustado = 0.03).
+The men's email wins clearly: +0.77 USD per customer versus control (95% CI: 0.49 to 1.05), against +0.42 for the women's email. The difference between the two (+0.35 USD, 95% CI: 0.03 to 0.66) is also significant (adjusted p = 0.03).
 
-Quise saber de dónde salía ese efecto. El ticket promedio es parecido en los tres grupos, así que el correo parece funcionar porque compra más gente, no porque cada quien gaste más. Lo tomo como descriptivo, porque el ticket solo se calcula sobre quienes compraron.
+I wanted to know where that effect came from. Average order value is similar across the three groups, so the email seems to work because more people buy, not because each buyer spends more. I treat this as descriptive, because order value is only computed over customers who bought.
 
-Para comprobar que el resultado no dependía del método, repetí los intervalos con bootstrap (10,000 réplicas), que difieren de los de Welch en menos de 0.01 USD, y acoté el gasto al percentil 95 de los compradores. Ninguna conclusión cambió.
+To check that the result did not depend on the method, I recomputed the intervals with a bootstrap (10,000 replicates), which differ from the Welch intervals by less than 0.01 USD, and capped spend at the 95th percentile of buyers. No conclusion changed.
 
-### La tentación de personalizar
+### The temptation to personalize
 
-El siguiente paso natural era preguntar si algunos clientes responden mejor a un correo que a otro. Si fuera así, mandar a cada quien el que le conviene dejaría más dinero que mandar el mismo a todos.
+The natural next step was to ask whether some customers respond better to one email than the other. If so, sending each customer the email that suits them would bring in more money than sending everyone the same one.
 
-Para no engañarme con resultados casuales, dividí la muestra al azar en dos mitades: una para explorar y otra para confirmar. En la primera, dos diferencias del correo de mujer parecían prometedoras (clientes nuevos y canal de compra, p < 0.10). En la mitad de confirmación ninguna se repitió (p = 0.72 y 0.94). Solo usé variables medidas antes del envío, porque segmentar por algo que el correo pudo cambiar, como haber visitado el sitio, rompería la aleatorización.
+To avoid fooling myself with chance results, I split the sample at random into two halves: one to explore and one to confirm. In the first half, two differences for the women's email looked promising (new customers and purchase channel, p < 0.10). In the confirmation half, neither repeated (p = 0.72 and 0.94). I only used variables measured before the send, because segmenting by something the email could have changed, such as having visited the site, would break the randomization.
 
-También probé un modelo de uplift (T-learner) que elige el correo para cada cliente. Lo ajusté en un conjunto de validación y lo evalué una sola vez en un 30 % de datos que no había visto. Tampoco le ganó a la regla simple: −0.15 USD por cliente (IC 95 %: −0.41 a +0.10).
+I also tried an uplift model (T-learner) that picks the email for each customer. I tuned it on a validation set and evaluated it once on 30% of the data it had never seen. It did not beat the simple rule either: −0.15 USD per customer (95% CI: −0.41 to +0.10).
 
-De forma exploratoria, el correo de hombre tiene efecto positivo en los 18 segmentos revisados y es el mejor en 15. Con el poder disponible por segmento, no encontrar diferencias no prueba que no existan, pero sí que no hay evidencia para complicar la estrategia.
+As an exploratory check, the men's email has a positive effect in all 18 segments reviewed and is the best in 15. Given the power available per segment, not finding differences does not prove they don't exist, but it does mean there is no evidence to justify a more complicated strategy.
 
-![Valor de cada regla](reports/figures/03_valor_reglas.png)
+![Value of each rule](reports/figures/03_policy_value.png)
 
-### Por último, traducirlo a dinero
+### Finally, translate it into money
 
-El experimento no incluye costos, así que planteé escenarios. Con un margen de 30 % y usando el límite inferior del intervalo, la campaña sigue dejando ganancia mientras cada correo cueste menos de unos 0.15 USD. Es decir, la recomendación se sostiene incluso con supuestos conservadores.
+The experiment has no cost data, so I set up scenarios. With a 30% margin and using the lower bound of the interval, the campaign still makes a profit as long as each email costs less than about 0.15 USD. In other words, the recommendation holds even under conservative assumptions.
 
-## Qué haría después
+## What I would do next
 
-Probaría una versión mejorada del correo de hombre contra la actual, manteniendo siempre un grupo sin correo para seguir midiendo el efecto incremental, y agregaría la tasa de bajas de la lista como métrica de control.
+I would test an improved version of the men's email against the current one, always keeping a no-email group to keep measuring the incremental effect, and I would add the list unsubscribe rate as a guardrail metric.
 
-## Limitaciones
+## Limitations
 
-- El experimento es de 2008; la respuesta al correo electrónico hoy es distinta.
-- No hay datos de costos, márgenes, bajas de la lista ni quejas de spam. Los escenarios de margen y costo son supuestos y están marcados como tales.
-- La ventana es de dos semanas: no mide efectos de largo plazo ni si las compras solo se adelantaron.
-- El gasto parece estar topado en 499 USD (12 compradores en ese valor).
+- The experiment is from 2008; the response to email is different today.
+- There is no data on costs, margins, list unsubscribes or spam complaints. The margin and cost scenarios are assumptions and are labeled as such.
+- The window is two weeks: it does not measure long-term effects or whether purchases were simply pulled forward.
+- Spend appears to be capped at 499 USD (12 buyers at that value).
 
 ---
 
-## Dónde está cada parte
+## Where each part lives
 
-| Pregunta | Método | Notebook |
+| Question | Method | Notebook |
 |---|---|---|
-| ¿El experimento es válido? | Sample ratio mismatch, balance de covariables, poder estadístico | [01_validacion](notebooks/01_validacion.ipynb) |
-| ¿Funcionan las campañas? ¿Cuál es mejor? | Pruebas de proporciones y de Welch, ajuste de Holm, bootstrap, sensibilidad a extremos | [02_analisis](notebooks/02_analisis.ipynb) |
-| ¿A quién mandar qué? ¿Cuánto vale? | Interacciones con muestra de confirmación, T-learner evaluado con IPW, escenarios de margen y costo | [03_segmentos_e_impacto](notebooks/03_segmentos_e_impacto.ipynb) |
+| Is the experiment valid? | Sample ratio mismatch, covariate balance, statistical power | [01_validation](notebooks/01_validation.ipynb) |
+| Do the campaigns work? Which is better? | Proportion and Welch tests, Holm adjustment, bootstrap, sensitivity to extremes | [02_analysis](notebooks/02_analysis.ipynb) |
+| Who should get what? How much is it worth? | Interactions with a confirmation sample, T-learner evaluated with IPW, margin and cost scenarios | [03_segments_and_impact](notebooks/03_segments_and_impact.ipynb) |
 
-## Cómo reproducirlo
+## How to reproduce it
 
 ```bash
 git clone https://github.com/cdtorrespi/hillstrom-email-ab-test.git
 cd hillstrom-email-ab-test
-python -m venv .venv && source .venv/bin/activate   # en Windows: .venv\Scripts\activate
+python -m venv .venv && source .venv/bin/activate   # on Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-python src/descargar_datos.py   # valida el CSV incluido (o lo descarga si falta)
+python src/download_data.py   # validates the included CSV (or downloads it if missing)
 jupyter notebook notebooks/
 ```
 
-El CSV ya viene en `data/raw/`. Si lo borras y la descarga automática falla, baja el CSV del [blog de MineThatData](https://blog.minethatdata.com/2008/03/minethatdata-e-mail-analytics-and-data.html) y guárdalo como `data/raw/hillstrom.csv`.
+The CSV is already in `data/raw/`. If you delete it and the automatic download fails, get the CSV from the [MineThatData blog](https://blog.minethatdata.com/2008/03/minethatdata-e-mail-analytics-and-data.html) and save it as `data/raw/hillstrom.csv`.
 
-Parte de SQL (opcional; correr desde la raíz del repo porque la carga usa una ruta relativa):
+SQL part (optional; run from the repo root because the load uses a relative path):
 
 ```bash
 createdb hillstrom
-psql -d hillstrom -f sql/01_crear_tabla.sql
-psql -d hillstrom -f sql/02_calidad_datos.sql
-psql -d hillstrom -f sql/03_exploracion.sql
+psql -d hillstrom -f sql/01_create_table.sql
+psql -d hillstrom -f sql/02_data_quality.sql
+psql -d hillstrom -f sql/03_exploration.sql
 ```
 
-## Estructura
+## Structure
 
 ```
 hillstrom-email-ab-test/
 ├── README.md
 ├── requirements.txt
-├── data/raw/hillstrom.csv    # datos originales (64,000 clientes)
+├── data/raw/hillstrom.csv    # original data (64,000 customers)
 ├── docs/
-│   └── plan_de_analisis.md   # métricas, hipótesis y criterios fijados antes del análisis
+│   └── analysis_plan.md      # metrics, hypotheses and criteria fixed before the analysis
 ├── sql/
-│   ├── 01_crear_tabla.sql    # esquema y carga en PostgreSQL
-│   ├── 02_calidad_datos.sql
-│   └── 03_exploracion.sql
+│   ├── 01_create_table.sql   # schema and load in PostgreSQL
+│   ├── 02_data_quality.sql
+│   └── 03_exploration.sql
 ├── src/
-│   ├── descargar_datos.py
-│   ├── datos.py              # carga y constantes
-│   └── estadistica.py        # pruebas, bootstrap, Holm, MCO robusto
+│   ├── download_data.py
+│   ├── dataset.py            # loading and constants
+│   └── stats_utils.py        # tests, bootstrap, Holm, robust OLS
 ├── notebooks/
-│   ├── 01_validacion.ipynb
-│   ├── 02_analisis.ipynb
-│   └── 03_segmentos_e_impacto.ipynb
+│   ├── 01_validation.ipynb
+│   ├── 02_analysis.ipynb
+│   └── 03_segments_and_impact.ipynb
 └── reports/
     ├── figures/
-    └── powerbi/              # tablas para el reporte de decisión
+    └── powerbi/              # tables for the decision report
 ```
 
-## Datos
+## Data
 
-Kevin Hillstrom, *MineThatData E-Mail Analytics and Data Mining Challenge* (2008). Dataset público de 64,000 clientes que compraron en los últimos 12 meses, asignados al azar a tres grupos y seguidos durante dos semanas después del envío.
+Kevin Hillstrom, *MineThatData E-Mail Analytics and Data Mining Challenge* (2008). Public dataset of 64,000 customers who had bought in the past 12 months, randomly assigned to three groups and followed for two weeks after the send.
 
-## Autor
+## Author
 
-Carlos Daniel Torres Pillado, analista de datos. Chihuahua, México.
+Carlos Daniel Torres Pillado, data analyst. Chihuahua, Mexico.
 
 - GitHub: [@cdtorrespi](https://github.com/cdtorrespi)
-- Correo: [cdtorres.pi@gmail.com](mailto:cdtorres.pi@gmail.com)
+- Email: [cdtorres.pi@gmail.com](mailto:cdtorres.pi@gmail.com)
