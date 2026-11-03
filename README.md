@@ -128,3 +128,10 @@ hillstrom-email-ab-test/
 ## Datos
 
 Kevin Hillstrom, *MineThatData E-Mail Analytics and Data Mining Challenge* (2008). Dataset público de 64,000 clientes que compraron en los últimos 12 meses, asignados al azar a tres grupos y seguidos durante dos semanas después del envío.
+
+## Autor
+
+**Carlos Daniel Torres Pillado**, analista de datos · Chihuahua, México
+
+- GitHub: [@cdtorrespi](https://github.com/cdtorrespi)
+- Correo: [cdtorres.pi@gmail.com](mailto:cdtorres.pi@gmail.com)
