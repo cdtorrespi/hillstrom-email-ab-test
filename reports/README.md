@@ -26,7 +26,7 @@ La idea del reporte no es repetir las gráficas del análisis, sino servir como 
 2. **Segmentación:** filtros por `segmento` y `nivel` de `efectos_por_segmento.csv`.
 3. **Gráfico de barras con barras de error:** `efecto` por `campana` para el segmento elegido, con `ic_inf` e `ic_sup`.
 4. **Tabla de escenarios:** `escenarios_impacto.csv` con un parámetro de margen.
-5. **Nota fija:** los efectos por segmento son exploratorios; ninguna diferencia entre segmentos se confirmó en la muestra de validación.
+5. **Nota fija:** los efectos por segmento son exploratorios; ninguna diferencia entre segmentos se confirmó en la mitad de confirmación.
 
 **Medidas DAX de ejemplo**
 

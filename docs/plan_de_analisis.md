@@ -86,7 +86,7 @@ Un modelo por grupo (*T-learner*) predice el ingreso esperado de cada cliente co
 
 - Una campaña se recomienda si el límite inferior del IC 95 % del ingreso incremental por cliente es mayor que el costo de envío.
 - Entre dos campañas recomendables se elige la de mayor ingreso incremental, solo si la diferencia (H3) es significativa; si no, se elige por costo o se prueban ambas otra vez.
-- Una regla por segmento solo se recomienda si supera a la mejor regla simple en los datos de validación.
+- Una regla por segmento o un modelo solo se recomienda si supera a la mejor regla simple en datos que no se usaron para construirlo (mitad de confirmación o conjunto de prueba).
 
 ## 10. Limitaciones conocidas
 

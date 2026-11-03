@@ -69,7 +69,10 @@ def comparar_proporciones(y_t: np.ndarray, y_c: np.ndarray, metrica: str, compar
 
 
 def comparar_medias(y_t: np.ndarray, y_c: np.ndarray, metrica: str, comparacion: str) -> Resultado:
-    """Diferencia de medias con prueba de Welch."""
+    """Diferencia de medias con prueba de Welch.
+
+    El IC usa z = 1.96; con ~21 mil clientes por grupo la diferencia con la t de Welch es despreciable.
+    """
     y_t, y_c = np.asarray(y_t, float), np.asarray(y_c, float)
     dif = y_t.mean() - y_c.mean()
     se = np.sqrt(y_t.var(ddof=1) / len(y_t) + y_c.var(ddof=1) / len(y_c))

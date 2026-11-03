@@ -56,7 +56,7 @@ FROM clientes
 GROUP BY channel, grupo
 ORDER BY channel, grupo;
 
--- 6. Distribución del gasto entre compradores (solo PostgreSQL: percentile_cont)
+-- 6. Distribución del gasto entre compradores (percentiles con percentile_cont)
 SELECT
     grupo,
     PERCENTILE_CONT(0.50) WITHIN GROUP (ORDER BY spend) AS p50,

@@ -1,6 +1,6 @@
 -- Revisiones de calidad antes de cualquier análisis.
 
--- 1. Total de filas y valores nulos por columna (deben ser 64,000 y 0)
+-- 1. Total de filas y nulos en columnas clave (deben ser 64,000 y 0)
 SELECT
     COUNT(*)                                        AS filas,
     SUM(CASE WHEN recency    IS NULL THEN 1 ELSE 0 END) AS nulos_recency,
